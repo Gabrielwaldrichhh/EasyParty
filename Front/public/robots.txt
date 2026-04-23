@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://easyparty.vercel.app/sitemap.xml

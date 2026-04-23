@@ -33,6 +33,7 @@ Railway →  Backend (Node/Express) + PostgreSQL
 | `STRIPE_WEBHOOK_SECRET` | `whsec_...` — ver seção 1.3 abaixo | ✅ |
 | `STRIPE_PRICE_BOOST_AVULSO` | ID do Price no Stripe para boost R$9,99 | ✅ |
 | `STRIPE_PRICE_PRO` | ID do Price no Stripe para Pro R$29,99/mês | ✅ |
+| `RESEND_API_KEY` | API key do [resend.com](https://resend.com) — e-mails de recuperação de senha. Gratuito até 3k e-mails/mês | recomendado |
 
 ### 1.3 Configurar Webhook do Stripe
 

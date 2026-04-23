@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
 import { LoginPage } from "./pages/LoginPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { LandingPage } from "./pages/LandingPage";
 import { Home } from "./pages/Home";
 import { DashboardPage } from "./pages/DashboardPage";
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
         <Home />
       </RotaProtegida>
     ),
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
   },
   {
     path: "/checkout/sucesso",

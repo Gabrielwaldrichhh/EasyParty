@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, MapPin } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, MapPin, CheckCircle } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { authService } from "../services/authService";
 import logo from "../img/logoo-new-png.png";
@@ -94,8 +94,11 @@ function BotaoGoogle({ label }: { label: string }) {
 }
 
 export function LoginPage() {
-  const [modo, setModo] = useState<"login" | "registro">("login");
+  const [modo, setModo] = useState<"login" | "registro" | "esqueci">("login");
   const { login, register, loading, error, setError } = useAuth();
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotDone, setForgotDone] = useState(false);
 
   const [formLogin, setFormLogin] = useState({ username: "", senha: "" });
   const [formRegistro, setFormRegistro] = useState({ username: "", email: "", senha: "", confirmar: "" });
@@ -159,12 +162,28 @@ export function LoginPage() {
     await register(formRegistro.username, formRegistro.email, formRegistro.senha);
   }
 
-  function trocarModo(proximo: "login" | "registro") {
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setForgotLoading(true);
+    try {
+      await authService.forgotPassword(forgotEmail);
+      setForgotDone(true);
+    } catch {
+      // Always show success to avoid leaking email existence
+      setForgotDone(true);
+    } finally {
+      setForgotLoading(false);
+    }
+  }
+
+  function trocarModo(proximo: "login" | "registro" | "esqueci") {
     setError("");
     setModo(proximo);
     setUsernameStatus("idle");
     setEmailStatus("idle");
     setUsernameSuggestions([]);
+    setForgotDone(false);
+    setForgotEmail("");
   }
 
   const isLogin = modo === "login";
@@ -197,26 +216,28 @@ export function LoginPage() {
         <div className="bg-black/20 border border-white/25 backdrop-blur-md rounded-3xl p-6 shadow-2xl flex flex-col gap-5">
 
           {/* Tabs */}
-          <div className="flex bg-black/30 rounded-xl p-1">
-            <button
-              type="button"
-              onClick={() => trocarModo("login")}
-              className={`flex-1 h-8 rounded-lg text-sm font-semibold transition-all ${
-                isLogin ? "bg-white text-[#ee2525] shadow" : "text-white/60 hover:text-white"
-              }`}
-            >
-              Entrar
-            </button>
-            <button
-              type="button"
-              onClick={() => trocarModo("registro")}
-              className={`flex-1 h-8 rounded-lg text-sm font-semibold transition-all ${
-                !isLogin ? "bg-white text-[#ee2525] shadow" : "text-white/60 hover:text-white"
-              }`}
-            >
-              Criar conta
-            </button>
-          </div>
+          {modo !== "esqueci" && (
+            <div className="flex bg-black/30 rounded-xl p-1">
+              <button
+                type="button"
+                onClick={() => trocarModo("login")}
+                className={`flex-1 h-8 rounded-lg text-sm font-semibold transition-all ${
+                  isLogin ? "bg-white text-[#ee2525] shadow" : "text-white/60 hover:text-white"
+                }`}
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                onClick={() => trocarModo("registro")}
+                className={`flex-1 h-8 rounded-lg text-sm font-semibold transition-all ${
+                  !isLogin ? "bg-white text-[#ee2525] shadow" : "text-white/60 hover:text-white"
+                }`}
+              >
+                Criar conta
+              </button>
+            </div>
+          )}
 
           {/* Erro */}
           {error && (
@@ -246,7 +267,7 @@ export function LoginPage() {
                 onChange={v => setFormLogin(f => ({ ...f, senha: v }))}
                 required
               />
-              <button type="button" className="text-xs text-white/50 hover:text-white/80 text-right transition-colors -mt-1">
+              <button type="button" onClick={() => trocarModo("esqueci")} className="text-xs text-white/50 hover:text-white/80 text-right transition-colors -mt-1">
                 Esqueceu sua senha?
               </button>
               <button
@@ -383,6 +404,55 @@ export function LoginPage() {
               <BotaoGoogle label="Cadastrar com Google" />
             </form>
           )}
+          {/* Formulário Esqueci a senha */}
+          {modo === "esqueci" && (
+            forgotDone ? (
+              <div className="flex flex-col items-center gap-4 py-4">
+                <CheckCircle className="w-12 h-12 text-green-400" />
+                <p className="text-white font-semibold text-center">Verifique seu e-mail!</p>
+                <p className="text-xs text-white/60 text-center">
+                  Se o e-mail existir na nossa base, você receberá um link de recuperação em breve.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => trocarModo("login")}
+                  className="text-xs text-white/60 hover:text-white transition-colors underline"
+                >
+                  Voltar para o login
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+                <div>
+                  <button type="button" onClick={() => trocarModo("login")} className="text-xs text-white/50 hover:text-white/80 transition-colors mb-3">
+                    ← Voltar
+                  </button>
+                  <p className="text-sm text-white/80 font-semibold mb-1">Recuperar senha</p>
+                  <p className="text-xs text-white/50">Digite seu e-mail e enviaremos um link de redefinição.</p>
+                </div>
+                <Field
+                  icon={Mail}
+                  label="E-mail"
+                  type="email"
+                  placeholder="voce@email.com"
+                  value={forgotEmail}
+                  onChange={setForgotEmail}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="w-full h-11 rounded-xl bg-white text-[#ee2525] font-bold text-sm flex items-center justify-center gap-2 hover:bg-white/90 active:scale-[0.98] disabled:opacity-60 transition-all shadow-lg"
+                >
+                  {forgotLoading
+                    ? <span className="w-4 h-4 border-2 border-[#ee2525]/30 border-t-[#ee2525] rounded-full animate-spin" />
+                    : <> Enviar link <ArrowRight className="w-4 h-4" /> </>
+                  }
+                </button>
+              </form>
+            )
+          )}
+
         </div>
 
         {/* Rodapé */}

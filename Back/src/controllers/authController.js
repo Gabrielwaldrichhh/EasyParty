@@ -53,4 +53,23 @@ async function updateProfile(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { register, login, checkUsername, checkEmail, getMe, updateProfile };
+async function forgotPassword(req, res, next) {
+  try {
+    await authService.requestPasswordReset(req.body.email);
+    // Always return 200 to avoid leaking whether email exists
+    res.json({ success: true, message: 'Se o e-mail existir, você receberá um link em breve.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function resetPassword(req, res, next) {
+  try {
+    await authService.resetPassword(req.body.token, req.body.password);
+    res.json({ success: true, message: 'Senha redefinida com sucesso.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { register, login, checkUsername, checkEmail, getMe, updateProfile, forgotPassword, resetPassword };

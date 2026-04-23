@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { Resend } = require('resend');
 const prisma = require('../config/prisma');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function register({ username, email, password }) {
   // Trim para evitar espaços acidentais; email normalizado para lowercase
@@ -107,4 +111,65 @@ async function updateProfile(id, data) {
   });
 }
 
-module.exports = { register, login, isUsernameAvailable, isEmailAvailable, suggestUsernames, getUserById, updateProfile };
+async function requestPasswordReset(email) {
+  email = email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return; // silently ignore — don't leak whether email exists
+
+  // Invalidate any existing tokens
+  await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+  await prisma.passwordResetToken.create({
+    data: { userId: user.id, token, expiresAt },
+  });
+
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const resetLink = `${frontendUrl}/reset-password?token=${token}`;
+
+  if (process.env.RESEND_API_KEY) {
+    await resend.emails.send({
+      from: 'EasyParty <noreply@easyparty.app>',
+      to: email,
+      subject: 'Redefinição de senha — EasyParty',
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
+          <h2 style="color:#ee2525;margin-bottom:8px">Redefinir senha</h2>
+          <p style="color:#555;margin-bottom:24px">
+            Recebemos um pedido para redefinir a senha da sua conta EasyParty.
+            O link abaixo expira em <strong>1 hora</strong>.
+          </p>
+          <a href="${resetLink}" style="
+            display:inline-block;background:#ee2525;color:#fff;
+            text-decoration:none;padding:12px 28px;border-radius:10px;
+            font-weight:bold;font-size:15px
+          ">Redefinir minha senha</a>
+          <p style="color:#aaa;font-size:12px;margin-top:24px">
+            Se você não solicitou a redefinição, ignore este e-mail.
+          </p>
+        </div>
+      `,
+    });
+  }
+}
+
+async function resetPassword(token, newPassword) {
+  const record = await prisma.passwordResetToken.findUnique({ where: { token } });
+
+  if (!record || record.usedAt || record.expiresAt < new Date()) {
+    const err = new Error('Link inválido ou expirado');
+    err.status = 400;
+    throw err;
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: record.userId }, data: { password: hashed } }),
+    prisma.passwordResetToken.update({ where: { id: record.id }, data: { usedAt: new Date() } }),
+  ]);
+}
+
+module.exports = { register, login, isUsernameAvailable, isEmailAvailable, suggestUsernames, getUserById, updateProfile, requestPasswordReset, resetPassword };

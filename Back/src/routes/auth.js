@@ -32,11 +32,26 @@ const updateProfileSchema = z.object({
   avatarUrl:   z.string().url().optional().nullable(),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email('E-mail inválido'),
+});
+
+const resetPasswordSchema = z.object({
+  token:    z.string().min(1),
+  password: z.string()
+    .min(8, 'Mínimo 8 caracteres')
+    .regex(/[A-Z]/, 'Deve conter pelo menos uma letra maiúscula')
+    .regex(/[0-9]/, 'Deve conter pelo menos um número')
+    .regex(/[^a-zA-Z0-9]/, 'Deve conter pelo menos um caractere especial'),
+});
+
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.get('/check/username/:username', authController.checkUsername);
 router.get('/check/email/:email', authController.checkEmail);
 router.get('/me', authMiddleware, authController.getMe);
 router.put('/profile', authMiddleware, validate(updateProfileSchema), authController.updateProfile);
+router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);
+router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
 
 module.exports = router;
