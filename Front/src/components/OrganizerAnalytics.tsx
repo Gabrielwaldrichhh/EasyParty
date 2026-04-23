@@ -7,10 +7,6 @@ interface Props {
   isBoosted: boolean;
 }
 
-interface Snapshot {
-  proof: SocialProof;
-  ts: number;
-}
 
 /**
  * Painel de analytics para o organizador.

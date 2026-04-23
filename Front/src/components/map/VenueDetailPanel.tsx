@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, Pencil, Trash2, MapPin, Building2, CheckCircle } from "lucide-react";
-import type { Venue, VenueType, Category, UpdateVenuePayload } from "../../types";
+import type { Venue, VenueType, UpdateVenuePayload } from "../../types";
+import { CATEGORY_CONFIG } from "../../config/categories";
 
 const VENUE_TYPE_CONFIG: Record<VenueType, { emoji: string; label: string }> = {
   NIGHTCLUB:   { emoji: '🎵', label: 'Balada' },
@@ -12,12 +13,6 @@ const VENUE_TYPE_CONFIG: Record<VenueType, { emoji: string; label: string }> = {
   OTHER:       { emoji: '📍', label: 'Outro' },
 };
 
-const CATEGORY_CONFIG: Record<Category, { color: string; emoji: string; label: string }> = {
-  PARTY:      { color: '#ee2525', emoji: '🎉', label: 'Festa' },
-  EVENT:      { color: '#3b82f6', emoji: '📅', label: 'Evento' },
-  RESTAURANT: { color: '#f59e0b', emoji: '🍽️', label: 'Restaurante' },
-  GATHERING:  { color: '#10b981', emoji: '🤝', label: 'Reunião' },
-};
 
 interface Props {
   venue: Venue;
@@ -112,7 +107,7 @@ export function VenueDetailPanel({ venue, currentUserId, onClose, onDelete, onUp
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold text-foreground">{venue.name}</h2>
                 {venue.isVerified && (
-                  <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" title="Local verificado" />
+                  <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" aria-label="Local verificado" />
                 )}
               </div>
               <span className="text-xs text-muted-foreground mt-0.5 inline-block">
