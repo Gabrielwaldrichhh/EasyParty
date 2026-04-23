@@ -1,0 +1,7 @@
+ALTER TABLE "users"
+  ADD COLUMN IF NOT EXISTS "displayName" TEXT,
+  ADD COLUMN IF NOT EXISTS "bio"         TEXT,
+  ADD COLUMN IF NOT EXISTS "phone"       TEXT,
+  ADD COLUMN IF NOT EXISTS "city"        TEXT,
+  ADD COLUMN IF NOT EXISTS "state"       TEXT,
+  ADD COLUMN IF NOT EXISTS "birthDate"   TIMESTAMP(3);

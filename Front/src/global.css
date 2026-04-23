@@ -107,3 +107,64 @@
     );
   }
 }
+
+/* Keyframe para o anel pulsante dos marcadores de alto hype no mapa */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(1.4) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
+/* ── Premium Motion Layer ──────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Custom scrollbars — webkit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+/* Mobile momentum scrolling */
+.overflow-y-auto,
+.overflow-y-scroll,
+.overflow-x-auto,
+.overflow-x-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Text selection — brand accent */
+::selection {
+  background: rgba(238, 37, 37, 0.18);
+  color: inherit;
+}
+
+/* GPU acceleration base for animated elements */
+[data-motion],
+.motion-safe\:transform {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

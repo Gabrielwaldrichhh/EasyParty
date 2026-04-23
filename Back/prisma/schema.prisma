@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String    @id @default(uuid())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  avatarUrl   String?
+  // campos de perfil
+  displayName String?
+  bio         String?
+  phone       String?
+  city        String?
+  state       String?
+  birthDate   DateTime?
+  // billing
+  stripeCustomerId String?
+  stripePlan       String   @default("free")   // "free" | "pro"
+  stripeSubId      String?
+  planExpiresAt    DateTime?
+  boostCredits     Int      @default(0)         // créditos restantes (plano Pro)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  events        Event[]
+  venues        Venue[]
+  boostedEvents BoostedEvent[]
+
+  @@map("users")
+}
+
+model BoostedEvent {
+  id              String   @id @default(uuid())
+  eventId         String
+  userId          String
+  stripeSessionId String
+  boostType       String   @default("avulso") // "avulso" | "pro"
+  paidAt          DateTime @default(now())
+  expiresAt       DateTime
+
+  user  User  @relation(fields: [userId],  references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("boosted_events")
+}
+
+// Local fisico permanente (casa noturna, bar, espaco de eventos, etc)
+model Venue {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  type        VenueType @default(OTHER)
+  latitude    Float
+  longitude   Float
+  address     String?
+  city        String?
+  state       String?
+  country     String    @default("Brazil")
+  imageUrl    String?
+  isVerified  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  ownerId String
+  owner   User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  events Event[]
+
+  @@map("venues")
+}
+
+// Evento que acontece num dia especifico (pode ter ou nao um venue fixo)
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  category       Category @default(PARTY)
+  customCategory String?  // usado quando category = OTHER
+  date           DateTime // data e hora de inicio
+  endDate     DateTime?
+  price       Float    @default(0)
+  maxCapacity  Int?
+  minAge       Int?     // faixa etária mínima (ex: 18)
+  imageUrl     String?
+  isPublic     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Venue fixo (opcional) — se nao tiver, usa lat/lng direto
+  venueId String?
+  venue   Venue?  @relation(fields: [venueId], references: [id], onDelete: SetNull)
+
+  // Localizacao avulsa (quando nao tem venue fixo)
+  latitude  Float?
+  longitude Float?
+  address   String?
+
+  boostedBy BoostedEvent[]
+  views     EventView[]
+  checkins  Checkin[]
+
+  @@map("events")
+}
+
+model EventView {
+  id          String   @id @default(uuid())
+  eventId     String
+  fingerprint String   // userId ou IP hash
+  createdAt   DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, createdAt])
+  @@map("event_views")
+}
+
+model Checkin {
+  id                String   @id @default(uuid())
+  eventId           String
+  fingerprint       String   // userId ou IP hash
+  locationValidated Boolean  @default(false)
+  weight            Int      @default(1)
+  createdAt         DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, fingerprint])
+  @@index([eventId, createdAt])
+  @@map("checkins")
+}
+
+enum Category {
+  PARTY
+  SHOW
+  SPORTS
+  ESPORTS
+  FESTIVAL
+  THEATER
+  WORKSHOP
+  GASTRONOMY
+  NETWORKING
+  RELIGIOUS
+  OTHER
+}
+
+enum VenueType {
+  NIGHTCLUB
+  BAR
+  RESTAURANT
+  EVENT_SPACE
+  OUTDOOR
+  PRIVATE
+  OTHER
+}
