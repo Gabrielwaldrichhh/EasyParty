@@ -32,7 +32,10 @@ function errorHandler(err, req, res, next) {
     ? (err.message || 'Erro interno do servidor')
     : 'Erro interno do servidor';
 
-  res.status(status).json({ success: false, message });
+  const body = { success: false, message };
+  if (err.code && status < 500) body.code = err.code;
+
+  res.status(status).json(body);
 }
 
 module.exports = errorHandler;

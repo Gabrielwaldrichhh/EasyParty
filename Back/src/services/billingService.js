@@ -1,5 +1,6 @@
 const stripe = require('../config/stripe');
 const prisma  = require('../config/prisma');
+const logger  = require('../config/logger');
 
 // ─── Constantes de negócio ───────────────────────────────────────────────────
 
@@ -86,10 +87,12 @@ async function createProSubscriptionCheckout({ userId, successUrl, cancelUrl }) 
     cancel_url:  cancelUrl,
     metadata:    { userId, type: 'pro_subscription' },
     subscription_data: {
+      trial_period_days: 7,
       metadata: { userId, planId: 'pro' },
     },
   });
 
+  logger.info('billing.checkout.pro.created', { userId, sessionId: session.id });
   return { url: session.url, sessionId: session.id };
 }
 
@@ -185,6 +188,12 @@ async function createBillingPortal({ userId, returnUrl }) {
 // ─── Webhooks ─────────────────────────────────────────────────────────────────
 
 async function handleCheckoutCompleted(session) {
+  // S3: Só processar se pagamento realmente confirmado
+  if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') {
+    logger.warn('billing.webhook.skipped_unpaid', { sessionId: session.id, paymentStatus: session.payment_status });
+    return;
+  }
+
   const { userId, eventId, type } = session.metadata ?? {};
 
   if (type === 'boost_avulso' && userId && eventId) {
@@ -198,11 +207,11 @@ async function handleCheckoutCompleted(session) {
         expiresAt,
       },
     });
+    logger.info('billing.boost.avulso.activated', { userId, eventId, sessionId: session.id });
     return;
   }
 
   if (type === 'pro_subscription' && userId) {
-    // Ativa plano Pro e recarrega créditos
     await prisma.user.update({
       where: { id: userId },
       data:  {
@@ -211,6 +220,7 @@ async function handleCheckoutCompleted(session) {
         boostCredits: PRO_BOOST_LIMIT,
       },
     });
+    logger.info('billing.pro.activated', { userId, sessionId: session.id });
   }
 }
 

@@ -3,6 +3,7 @@ import { X, MapPin, Clock, DollarSign, Users, ShieldAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/ui/ImageUploader";
+import { UpgradeModal } from "@/components/ui/UpgradeModal";
 import { CATEGORY_CONFIG } from "../../config/categories";
 import type { Category, CreateEventPayload } from "../../types";
 
@@ -18,6 +19,7 @@ const CATEGORIAS = (Object.entries(CATEGORY_CONFIG) as [Category, typeof CATEGOR
 export function CreateEventModal({ lat, lng, onSubmit, onClose }: Props) {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
   const dataHoje = new Date().toISOString().split('T')[0];
   const horapadrao = new Date();
@@ -87,15 +89,25 @@ export function CreateEventModal({ lat, lng, onSubmit, onClose }: Props) {
       });
       onClose();
     } catch (err: any) {
+      const status = err.response?.status;
       const data = err.response?.data;
-      const msg = data?.errors?.[0]?.message || data?.message || 'Erro ao criar evento';
-      setErro(msg);
+      // Limite do plano free → mostrar modal de upgrade
+      if (status === 403 && data?.code === 'FREE_PLAN_LIMIT') {
+        setShowUpgrade(true);
+      } else {
+        const msg = data?.errors?.[0]?.message || data?.message || 'Erro ao criar evento';
+        setErro(msg);
+      }
     } finally {
       setCarregando(false);
     }
   }
 
   const cfgAtual = CATEGORY_CONFIG[form.categoria];
+
+  if (showUpgrade) {
+    return <UpgradeModal onClose={() => { setShowUpgrade(false); onClose(); }} />;
+  }
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4">

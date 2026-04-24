@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const logger = require('./config/logger');
+const rateLimitByUser = require('./middlewares/rateLimitByUser');
 
 const authRoutes      = require('./routes/auth');
 const eventRoutes     = require('./routes/events');
@@ -69,8 +71,8 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many requests, try again later' },
 });
 
-// Rotas de escrita (create/update/delete de eventos)
-const writeLimiter = rateLimit({
+// Rotas de escrita (create/update/delete de eventos) — por userId quando autenticado
+const writeLimiter = rateLimitByUser({
   windowMs: 15 * 60 * 1000,
   max: 60,
   message: { success: false, message: 'Too many write requests, try again later' },
@@ -114,4 +116,4 @@ app.use((req, res) => res.status(404).json({ success: false, message: 'Route not
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));

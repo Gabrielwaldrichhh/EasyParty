@@ -97,7 +97,7 @@ function ProCard({
         </p>
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-bold text-foreground">R$ 29,99</span>
-          <span className="text-xs text-muted-foreground">/mês · cancele quando quiser</span>
+          <span className="text-xs text-muted-foreground">/mês · </span><span className="text-xs font-semibold text-green-600">7 dias grátis</span><span className="text-xs text-muted-foreground"> · cancele quando quiser</span>
         </div>
       </div>
 

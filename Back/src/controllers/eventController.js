@@ -1,5 +1,7 @@
 const eventService = require('../services/eventService');
 const socialProofService = require('../services/socialProofService');
+const prisma = require('../config/prisma');
+const logger = require('../config/logger');
 
 async function getToday(req, res, next) {
   try {
@@ -17,7 +19,29 @@ async function getOne(req, res, next) {
 
 async function create(req, res, next) {
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { stripePlan: true },
+    });
+
+    // Plano free: limite de 1 evento ativo por vez
+    if (user?.stripePlan !== 'pro') {
+      const eventosAtivos = await prisma.event.count({
+        where: {
+          authorId: req.user.id,
+          date: { gte: new Date() },
+        },
+      });
+      if (eventosAtivos >= 1) {
+        const err = new Error('Limite de eventos do plano gratuito atingido. Faça upgrade para o Pro.');
+        err.status = 403;
+        err.code = 'FREE_PLAN_LIMIT';
+        return next(err);
+      }
+    }
+
     const event = await eventService.createEvent({ ...req.body, authorId: req.user.id });
+    logger.info('event.created', { userId: req.user.id, eventId: event.id });
     res.status(201).json({ success: true, data: event });
   } catch (err) { next(err); }
 }
