@@ -2,7 +2,7 @@ require('dotenv').config();
 const prisma = require('../src/config/prisma');
 
 // ─── Usuário autor dos eventos de teste ──────────────────────────────────────
-const SEED_USERNAME = 'easyparty_demo';
+const SEED_USERNAME = 'fervomap_demo';
 
 // ─── Helpers de data ──────────────────────────────────────────────────────────
 function proximoEvento(diasOffset, horaInicio, horaFim) {
@@ -23,7 +23,7 @@ function buildEventos(authorId) {
     // ══════════ BLUMENAU — concentração principal ══════════
     {
       title: '[TESTE] Open Bar — Sexta no Madri',
-      description: '⚠️ Evento de demonstração — dados fictícios para teste do EasyParty.\n\nOpen bar completo das 22h às 3h, com DJ residente e pista coberta. Venha curtir a sexta no melhor estilo Blumenau.',
+      description: '⚠️ Evento de demonstração — dados fictícios para teste do FervoMap.\n\nOpen bar completo das 22h às 3h, com DJ residente e pista coberta. Venha curtir a sexta no melhor estilo Blumenau.',
       category: 'PARTY',
       ...proximoEvento(0, '22:00', '03:00'),
       price: 40,
@@ -383,9 +383,9 @@ async function main() {
     update: {},
     create: {
       username:    SEED_USERNAME,
-      email:       'demo@easyparty.app',
+      email:       'demo@fervomap.com.br',
       password:    senhaHash,
-      displayName: 'EasyParty Demo',
+      displayName: 'FervoMap Demo',
       bio:         '🤖 Conta de demonstração — eventos fictícios para teste da plataforma.',
     },
   });

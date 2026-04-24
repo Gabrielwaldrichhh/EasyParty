@@ -1,5 +1,5 @@
 /**
- * EasyParty Motion System
+ * FervoMap Motion System
  * Design tokens de animação — single source of truth para toda a UI.
  * Pense: Apple HIG + Linear + Vercel — sofisticado, rápido, nunca exagerado.
  */

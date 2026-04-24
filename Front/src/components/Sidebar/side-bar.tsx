@@ -97,7 +97,7 @@ export function Sidebar({ events, favorites, onToggleFavorite, onEventClick, onC
                 className="flex items-center gap-2.5 overflow-hidden"
               >
                 <img src={logo} alt="" className="w-7 h-7 rounded-full border-2 border-white/40 flex-shrink-0" />
-                <span className="font-bold text-base text-white whitespace-nowrap tracking-wide">EasyParty</span>
+                <span className="font-bold text-base text-white whitespace-nowrap tracking-wide">FervoMap</span>
               </motion.div>
             )}
           </AnimatePresence>

@@ -283,7 +283,7 @@ function PlanoBanner({
           <Shield className="w-5 h-5 text-purple-400" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-bold text-white">EasyParty Pro ativo</p>
+          <p className="text-sm font-bold text-white">FervoMap Pro ativo</p>
           <p className="text-xs text-white/50">
             {credits} crédito{credits !== 1 ? 's' : ''} disponíve{credits !== 1 ? 'is' : 'l'} este mês
           </p>

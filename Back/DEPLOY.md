@@ -1,4 +1,4 @@
-# EasyParty — Guia de Deploy (Vercel + Railway)
+# FervoMap — Guia de Deploy (Vercel + Railway)
 
 ## Visão Geral
 
@@ -15,7 +15,7 @@ Railway →  Backend (Node/Express) + PostgreSQL
 
 1. Acesse [railway.app](https://railway.app) → New Project
 2. **Add PostgreSQL** → Railway provisiona o banco automaticamente
-3. **Deploy from GitHub** → selecione o repositório, pasta `EasyParty/Back`
+3. **Deploy from GitHub** → selecione o repositório, pasta `EasyParty/Back` (pasta raiz do projeto)
 
 ### 1.2 Variáveis de Ambiente (Settings → Variables)
 
@@ -24,7 +24,7 @@ Railway →  Backend (Node/Express) + PostgreSQL
 | `DATABASE_URL` | Gerada automaticamente pelo Railway PostgreSQL | ✅ |
 | `JWT_SECRET` | String aleatória 64 chars: `openssl rand -hex 64` | ✅ |
 | `NODE_ENV` | `production` | ✅ |
-| `FRONTEND_URL` | URL do Vercel, ex: `https://easyparty.vercel.app` | ✅ |
+| `FRONTEND_URL` | URL do Vercel, ex: `https://fervomap.vercel.app` | ✅ |
 | `PORT` | `3000` (Railway detecta automaticamente via Dockerfile) | opcional |
 | `CLOUDINARY_CLOUD_NAME` | Seu cloud name no Cloudinary | ✅ |
 | `CLOUDINARY_API_KEY` | API key do Cloudinary | ✅ |
@@ -59,7 +59,7 @@ npx prisma migrate deploy
 
 ### 1.5 URL do Backend
 
-Após deploy, copie a URL gerada (ex: `https://easyparty-production.up.railway.app`).
+Após deploy, copie a URL gerada (ex: `https://fervomap-production.up.railway.app`).
 Você vai precisar dela para configurar o Vercel.
 
 ---
@@ -70,7 +70,7 @@ Você vai precisar dela para configurar o Vercel.
 
 1. Acesse [vercel.com](https://vercel.com) → New Project
 2. Importe o repositório GitHub
-3. **Root Directory**: `EasyParty/Front`
+3. **Root Directory**: `EasyParty/Front` (pasta raiz do frontend)
 4. **Framework Preset**: Vite
 5. **Build Command**: `npm run build`
 6. **Output Directory**: `dist`
@@ -79,7 +79,7 @@ Você vai precisar dela para configurar o Vercel.
 
 | Variável | Valor |
 |----------|-------|
-| `VITE_API_URL` | URL do Railway, ex: `https://easyparty-production.up.railway.app` |
+| `VITE_API_URL` | URL do Railway, ex: `https://fervomap-production.up.railway.app` |
 
 > Também adicione ao arquivo `Front/.env.production` localmente para builds locais de produção.
 

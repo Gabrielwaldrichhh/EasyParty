@@ -108,7 +108,7 @@ const DEPOIMENTOS = [
     nome: "Camila R.",
     cidade: "Blumenau, SC",
     avatar: "CR",
-    texto: "Em duas semanas minha festa já tinha 3x mais participantes do que o esperado. O boost do EasyParty é real.",
+    texto: "Em duas semanas minha festa já tinha 3x mais participantes do que o esperado. O boost do FervoMap é real.",
     estrelas: 5,
   },
   {
@@ -367,7 +367,7 @@ function Navbar({ onCtaClick }: { onCtaClick: () => void }) {
           <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: BRAND }}>
             <img src={logo} alt="" className="w-5 h-5 object-contain" />
           </div>
-          <span className="text-white font-bold text-lg tracking-tight">EasyParty</span>
+          <span className="text-white font-bold text-lg tracking-tight">FervoMap</span>
         </button>
 
         {/* Links desktop */}
@@ -461,7 +461,7 @@ function Hero() {
           </h1>
 
           <p className="text-base sm:text-lg text-white/55 leading-relaxed max-w-lg">
-            EasyParty é o mapa interativo de eventos da sua cidade. Festas, shows, festivais,
+            FervoMap é o mapa interativo de eventos da sua cidade. Festas, shows, festivais,
             workshops e muito mais — tudo em tempo real, com check-in por GPS e ranking de popularidade.
           </p>
 
@@ -872,7 +872,7 @@ function CtaFinal() {
             <br />Você já está aproveitando?
           </h2>
           <p className="text-white/45 text-lg max-w-xl mx-auto">
-            Junte-se a 47 mil pessoas que já descobrem eventos regionais com o EasyParty.
+            Junte-se a 47 mil pessoas que já descobrem eventos regionais com o FervoMap.
           </p>
         </div>
 
@@ -896,7 +896,7 @@ function Footer() {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: BRAND }}>
                 <img src={logo} alt="" className="w-4 h-4 object-contain" />
               </div>
-              <span className="text-white font-bold">EasyParty</span>
+              <span className="text-white font-bold">FervoMap</span>
             </div>
             <p className="text-white/35 text-xs leading-relaxed max-w-xs">
               O mapa interativo de eventos da sua cidade. Descubra, vá e crie experiências incríveis perto de você.
@@ -923,7 +923,7 @@ function Footer() {
         </div>
 
         <div className="border-t border-white/6 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/25 text-xs">© 2025 EasyParty. Todos os direitos reservados.</p>
+          <p className="text-white/25 text-xs">© 2025 FervoMap. Todos os direitos reservados.</p>
           <p className="text-white/20 text-xs">Feito com ❤️ para eventos regionais brasileiros</p>
         </div>
       </div>

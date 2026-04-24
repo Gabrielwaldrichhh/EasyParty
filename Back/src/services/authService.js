@@ -4,7 +4,13 @@ const crypto = require('crypto');
 const { Resend } = require('resend');
 const prisma = require('../config/prisma');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend = null;
+function getResend() {
+  if (!resend && process.env.RESEND_API_KEY) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 async function register({ username, email, password }) {
   // Trim para evitar espaços acidentais; email normalizado para lowercase
@@ -129,16 +135,17 @@ async function requestPasswordReset(email) {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   const resetLink = `${frontendUrl}/reset-password?token=${token}`;
 
-  if (process.env.RESEND_API_KEY) {
-    await resend.emails.send({
-      from: 'EasyParty <noreply@easyparty.app>',
+  const resendClient = getResend();
+  if (resendClient) {
+    await resendClient.emails.send({
+      from: 'FervoMap <noreply@fervomap.com.br>',
       to: email,
-      subject: 'Redefinição de senha — EasyParty',
+      subject: 'Redefinição de senha — FervoMap',
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
           <h2 style="color:#ee2525;margin-bottom:8px">Redefinir senha</h2>
           <p style="color:#555;margin-bottom:24px">
-            Recebemos um pedido para redefinir a senha da sua conta EasyParty.
+            Recebemos um pedido para redefinir a senha da sua conta FervoMap.
             O link abaixo expira em <strong>1 hora</strong>.
           </p>
           <a href="${resetLink}" style="

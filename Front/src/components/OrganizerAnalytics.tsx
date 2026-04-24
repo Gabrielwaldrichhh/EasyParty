@@ -69,7 +69,7 @@ export function OrganizerAnalytics({ eventId, isBoosted }: Props) {
   const dViews   = delta(current.visualizacoes, previous?.visualizacoes);
   const dPessoas = delta(current.pessoasAgora,  previous?.pessoasAgora);
 
-  // Pessoas "geradas" pelo EasyParty — o número mais importante.
+  // Pessoas "geradas" pelo FervoMap — o número mais importante.
   // Estimativa: pessoas agora + crescimento recente + fator de conversão (30%)
   const chegadas = current.textoChegaram
     ? parseInt(current.textoChegaram.match(/\+(\d+)/)?.[1] ?? '0')
@@ -99,11 +99,11 @@ export function OrganizerAnalytics({ eventId, isBoosted }: Props) {
         )}
       </div>
 
-      {/* Destaque principal — "Pessoas geradas pelo EasyParty" */}
+      {/* Destaque principal — "Pessoas geradas pelo FervoMap" */}
       <div className="px-5 py-5 border-b border-border/60"
         style={{ background: 'linear-gradient(135deg, #10b98108, #3b82f608)' }}>
         <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-3">
-          Pessoas levadas pelo EasyParty
+          Pessoas levadas pelo FervoMap
         </p>
         <div className="flex items-end gap-3">
           <span className="text-5xl font-black text-foreground leading-none">

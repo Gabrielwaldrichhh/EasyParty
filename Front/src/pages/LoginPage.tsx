@@ -201,10 +201,10 @@ export function LoginPage() {
         {/* Branding */}
         <div className="flex flex-col items-center gap-3 text-white">
           <div className="w-16 h-16 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center shadow-xl">
-            <img src={logo} alt="EasyParty" className="w-10 h-10 object-contain" />
+            <img src={logo} alt="FervoMap" className="w-10 h-10 object-contain" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">EasyParty</h1>
+            <h1 className="text-2xl font-bold tracking-tight">FervoMap</h1>
             <p className="text-white/60 text-sm mt-0.5 flex items-center justify-center gap-1">
               <MapPin className="w-3 h-3" />
               Encontre eventos perto de você

@@ -102,7 +102,7 @@ export function EventDetailPanel({ event, currentUserId, isFavorite, onToggleFav
     setNavOpen(false);
   }
   async function shareEvent() {
-    const text = `${event.title} — ${addressStr ?? ''}\nVeja no EasyParty`;
+    const text = `${event.title} — ${addressStr ?? ''}\nVeja no FervoMap`;
     if (navigator.share) {
       await navigator.share({ title: event.title, text }).catch(() => {});
     } else {

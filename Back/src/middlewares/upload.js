@@ -7,16 +7,16 @@ const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
 
 // Pastas por contexto
 const FOLDER_MAP = {
-  avatar: 'easyparty/avatars',
-  event:  'easyparty/events',
-  venue:  'easyparty/venues',
+  avatar: 'fervomap/avatars',
+  event:  'fervomap/events',
+  venue:  'fervomap/venues',
 };
 
 function makeUploader(context) {
   const storage = new CloudinaryStorage({
     cloudinary,
     params: {
-      folder: FOLDER_MAP[context] ?? 'easyparty/misc',
+      folder: FOLDER_MAP[context] ?? 'fervomap/misc',
       allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
       transformation: buildTransformation(context),
       // public_id gerado automaticamente pelo Cloudinary (UUID)

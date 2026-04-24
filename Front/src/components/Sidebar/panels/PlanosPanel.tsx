@@ -90,7 +90,7 @@ function ProCard({
       <div className="px-4 pt-4 pb-3" style={{ background: '#8b5cf612' }}>
         <div className="flex items-center gap-2 mb-1" style={{ color: '#8b5cf6' }}>
           <Zap className="w-5 h-5" />
-          <span className="text-sm font-bold">EasyParty Pro</span>
+          <span className="text-sm font-bold">FervoMap Pro</span>
         </div>
         <p className="text-[11px] text-muted-foreground mb-3">
           Assine e turbine até 5 eventos simultâneos todo mês — créditos se renovam automaticamente.
